@@ -1,0 +1,72 @@
+---
+stages:
+- name: Build
+  inputs:
+  - type: git
+    branch: master
+    service: ${SAMPLE_REPO}
+  triggers:
+  - type: commit
+  jobs:
+  - name: Build
+    type: builder
+    artifact_dir: ''
+    build_type: shell
+    script: |
+      #!/bin/bash
+      # Lint the playbook
+
+- name: OpenStack Deploy
+  inputs:
+  - type: job
+    stage: Build
+    job: Build
+    dir_name: null
+  triggers:
+  - type: stage
+  properties:
+  - name: OS_AUTH_URL
+    type: text
+  - name: OS_USERNAME
+    type: text
+  - name: OS_PASSWORD
+    type: secure
+  - name: OS_PROJ_NAME
+    type: text
+  - name: OS_VM_NAME
+    type: text
+  - name: OS_VM_RAM
+    type: text
+  - name: OS_VM_IMAGE
+    type: text
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: Pipeline
+    script: |
+      #!/bin/bash
+      echo "Install dependencies"
+      setup_tools/install_dependencies.sh > /dev/null
+
+      echo "Install python"
+      setup_tools/install_python.sh > /dev/null
+
+      echo "make venv"
+      setup_tools/make_venv.sh > /dev/null
+
+      echo "source ./venv/bin/activate"
+      source ./venv/bin/activate
+
+      echo "Run Ansible playbook"
+      ansible-playbook .playbook.yml
+
+      echo "Ansible playbook complete"
+hooks:
+- enabled: true
+  label: null
+  ssl_enabled: false
+  url: https://devops-api.ng.bluemix.net/v1/messaging/webhook/publish
