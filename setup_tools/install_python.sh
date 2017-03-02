@@ -13,6 +13,6 @@ tar xfz Python-2.7.9.tgz
 
 # Configure/install python
 cd Python-2.7.9/
-./configure --prefix=${DIR}/.localpython  --enable-ipv6
+./configure CFLAGS=-w --prefix=${DIR}/.localpython --enable-ipv6
 make
 make install
