@@ -55,7 +55,8 @@
     - name: Add system as host
       add_host:
         hostname: "OpenStack Instance ({{ os_vm_image }})"
-        ansible_host: "{{ create_server.openstack.public_v4 }}:{{ ssh_port }}"
+        ansible_host: "{{ create_server.openstack.public_v4 }}"
+        ansible_port: "{{ ssh_port }}"
         groups: "{{ host_group }}"
         ansible_ssh_private_key_file: "{{ user_home }}/{{ rsa_filename }}"
 
