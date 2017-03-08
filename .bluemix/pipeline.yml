@@ -25,6 +25,8 @@ stages:
   triggers:
   - type: stage
   properties:
+  - name: ID_RSA_BASE64
+    type: secure
   - name: OS_AUTH_URL
     type: text
   - name: OS_USERNAME
@@ -38,6 +40,9 @@ stages:
   - name: OS_VM_RAM
     type: text
   - name: OS_VM_IMAGE
+    type: text
+  - name: ANSIBLE_HOST_KEY_CHECKING
+    value: 'False'
     type: text
   jobs:
   - name: Deploy

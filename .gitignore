@@ -1,0 +1,4 @@
+.playbook.retry
+ansible_rsa
+ansible_rsa.pub
+
